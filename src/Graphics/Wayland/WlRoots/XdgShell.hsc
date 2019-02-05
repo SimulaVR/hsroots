@@ -9,7 +9,7 @@ module Graphics.Wayland.WlRoots.XdgShell
     , getXdgToplevel
 
     , WlrXdgToplevel
-    , WlrXdgToplevelEvents
+    , WlrXdgToplevelEvents (..)
     , getXdgToplevelEvents
 
     , MoveEvent (..)
