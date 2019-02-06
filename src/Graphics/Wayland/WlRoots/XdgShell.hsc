@@ -83,6 +83,8 @@ xdgShellCreate new (DisplayServer ptr) = do
     let signal = #{ptr struct wlr_xdg_shell, events.new_surface} shell
     handler <- addListener (WlListener new) signal
     sptr <- newStablePtr handler
+    putStr "xdg shell sptr: "
+    print (castStablePtrToPtr sptr)
     poke (#{ptr struct wlr_xdg_shell, data} shell) (castStablePtrToPtr sptr)
 
     pure shell
