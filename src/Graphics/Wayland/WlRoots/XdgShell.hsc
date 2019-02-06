@@ -254,7 +254,7 @@ xdgSurfaceAt surf x y = alloca $ \xptr -> alloca $ \yptr -> do
             pure $ Just (popup, newx, newy)
 
 
-foreign import ccall "wlr_xdg_surface_send_close" c_close :: Ptr WlrXdgSurface -> IO ()
+foreign import ccall "wlr_xdg_toplevel_send_close" c_close :: Ptr WlrXdgSurface -> IO ()
 
 sendClose :: Ptr WlrXdgSurface -> IO ()
 sendClose surf = do
