@@ -22,10 +22,10 @@ where
 import Control.Monad (when)
 import Control.Concurrent.MVar
 import Foreign.Storable (Storable(..))
-import Foreign.Marshal.Alloc (mallocBytes, free)
+import Foreign.Marshal.Alloc (mallocBytes)
 import Foreign.Ptr (Ptr, FunPtr, plusPtr, freeHaskellFunPtr, nullPtr, castFunPtrToPtr)
-import Foreign.ForeignPtr (ForeignPtr, withForeignPtr)
-import Foreign.Concurrent (newForeignPtr)
+import Foreign.ForeignPtr (ForeignPtr, withForeignPtr, newForeignPtr_)
+--import Foreign.Concurrent (newForeignPtr)
 
 data WlSignal a
 data WlList
@@ -39,17 +39,19 @@ foreign import ccall unsafe "wl_list_remove" c_list_remove :: Ptr WlList -> IO (
 
 destroyWlListener :: forall a. Ptr (WlListener a) -> IO ()
 destroyWlListener ptr = do
+    putStr "destroyed listener "
+    print ptr
     removeListener' ptr
     notify :: FunPtr (Ptr a -> IO ()) <- #{peek struct wl_listener, notify} ptr
     when (castFunPtrToPtr notify /= nullPtr) $ freeHaskellFunPtr notify
     #{poke struct wl_listener, notify} ptr nullPtr
 
-
+{-
 freeWlListener :: forall a. Ptr (WlListener a) -> IO ()
 freeWlListener ptr = do
     destroyWlListener ptr
     free ptr
-
+-}
 foreign import ccall "wrapper" mkCbFun :: (Ptr (WlListener a) -> Ptr a -> IO ()) -> IO (FunPtr (Ptr (WlListener a) -> Ptr a -> IO ()))
 
 makeListenerPtr :: forall a. WlListener a -> IO (ForeignPtr (WlListener a))
@@ -59,7 +61,7 @@ makeListenerPtr (WlListener fun) = do
     c_list_init link
     funPtr <- mkCbFun (\_ -> fun)
     #{poke struct wl_listener, notify} mem funPtr
-    newForeignPtr mem (freeWlListener mem)
+    newForeignPtr_ mem  -- (freeWlListener mem)
 
 addListener :: WlListener a -> Ptr (WlSignal a) -> IO (ListenerToken)
 addListener listener signal = do
