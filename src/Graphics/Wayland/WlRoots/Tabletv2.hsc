@@ -40,7 +40,7 @@ where
 -- newtype TabletManagerv2 = TabletManagerv2 (Ptr TabletManagerv2)
 
 
--- foreign import ccall unsafe "wlr_tablet_v2_create" c_create_manager :: Ptr DisplayServer -> IO (Ptr TabletManagerv2)
+-- foreign import ccall safe "wlr_tablet_v2_create" c_create_manager :: Ptr DisplayServer -> IO (Ptr TabletManagerv2)
 -- foreign import ccall safe "wlr_tablet_v2_destroy" c_destroy_manager :: Ptr TabletManagerv2 -> IO ()
 
 -- createTabletManagerv2 :: DisplayServer -> IO TabletManagerv2
@@ -54,7 +54,7 @@ where
 
 -- newtype Tabletv2 = Tabletv2 (Ptr Tabletv2)
 
--- foreign import ccall unsafe "wlr_tablet_create" c_create_tablet :: Ptr TabletManagerv2 -> Ptr WlrSeat -> Ptr InputDevice -> IO (Ptr Tabletv2)
+-- foreign import ccall safe "wlr_tablet_create" c_create_tablet :: Ptr TabletManagerv2 -> Ptr WlrSeat -> Ptr InputDevice -> IO (Ptr Tabletv2)
 -- createTabletv2 :: TabletManagerv2 -> Ptr WlrSeat -> Ptr InputDevice -> IO Tabletv2
 -- createTabletv2 (TabletManagerv2 mgr) seat iDev =
 --     Tabletv2 <$> throwErrnoIfNull "createTabletv2" (c_create_tablet mgr seat iDev)
@@ -62,7 +62,7 @@ where
 
 -- newtype TabletPadv2 = TabletPadv2 (Ptr TabletPadv2)
 
--- foreign import ccall unsafe "wlr_tablet_pad_create" c_create_tablet_pad :: Ptr TabletManagerv2 -> Ptr WlrSeat -> Ptr InputDevice -> IO (Ptr TabletPadv2)
+-- foreign import ccall safe "wlr_tablet_pad_create" c_create_tablet_pad :: Ptr TabletManagerv2 -> Ptr WlrSeat -> Ptr InputDevice -> IO (Ptr TabletPadv2)
 -- createTabletPadv2 :: TabletManagerv2 -> Ptr WlrSeat -> Ptr InputDevice -> IO TabletPadv2
 -- createTabletPadv2 (TabletManagerv2 mgr) seat iDev =
 --     TabletPadv2 <$> throwErrnoIfNull "createTabletPadv2" (c_create_tablet_pad mgr seat iDev)
@@ -70,13 +70,13 @@ where
 
 -- newtype TabletToolv2 = TabletToolv2 (Ptr TabletToolv2)
 
--- foreign import ccall unsafe "wlr_tablet_create_tool" c_create_tablet_tool :: Ptr TabletManagerv2 -> Ptr WlrSeat -> Ptr WlrTabletTool -> IO (Ptr TabletToolv2)
+-- foreign import ccall safe "wlr_tablet_create_tool" c_create_tablet_tool :: Ptr TabletManagerv2 -> Ptr WlrSeat -> Ptr WlrTabletTool -> IO (Ptr TabletToolv2)
 -- createTabletToolv2 :: TabletManagerv2 -> Ptr WlrSeat -> WlrTabletTool -> IO TabletToolv2
 -- createTabletToolv2 (TabletManagerv2 mgr) seat (WlrTabletTool tool) =
 --     TabletToolv2 <$> throwErrnoIfNull "createTabletToolv2" (c_create_tablet_tool mgr seat tool)
 
 
--- foreign import ccall unsafe "wlr_surface_accepts_tablet_v2" c_accepts_tablet :: Ptr Tabletv2 -> Ptr WlrSurface -> IO Word8
+-- foreign import ccall safe "wlr_surface_accepts_tablet_v2" c_accepts_tablet :: Ptr Tabletv2 -> Ptr WlrSurface -> IO Word8
 -- surfaceAcceptsTablet :: Tabletv2 -> Ptr WlrSurface -> IO Bool
 -- surfaceAcceptsTablet (Tabletv2 tablet) surf = (/= 0) <$> c_accepts_tablet tablet surf
 

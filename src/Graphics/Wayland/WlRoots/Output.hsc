@@ -110,7 +110,7 @@ getOutputPosition ptr = do
     y :: Int32 <- #{peek struct wlr_output, ly} ptr
     pure $ Point (fromIntegral x) (fromIntegral y)
 
-foreign import ccall unsafe "wlr_output_enable" c_output_enable :: Ptr WlrOutput -> Bool -> IO ()
+foreign import ccall safe "wlr_output_enable" c_output_enable :: Ptr WlrOutput -> Bool -> IO ()
 
 outputEnable :: Ptr WlrOutput -> IO ()
 outputEnable = flip c_output_enable True
@@ -121,7 +121,7 @@ outputDisable = flip c_output_enable False
 isOutputEnabled :: Ptr WlrOutput -> IO Bool
 isOutputEnabled = fmap (/= (0 :: Word8)) . #{peek struct wlr_output, enabled}
 
-foreign import ccall unsafe "wlr_output_make_current" c_make_current :: Ptr WlrOutput -> Ptr CInt -> IO Word8
+foreign import ccall safe "wlr_output_make_current" c_make_current :: Ptr WlrOutput -> Ptr CInt -> IO Word8
 makeOutputCurrent :: Ptr WlrOutput -> IO (Maybe Int)
 makeOutputCurrent out = alloca $ \ptr -> do
     ret <- c_make_current out ptr
@@ -130,7 +130,7 @@ makeOutputCurrent out = alloca $ \ptr -> do
         else Just . fromIntegral <$> peek ptr
 
 
-foreign import ccall unsafe "wlr_output_swap_buffers" c_swap_buffers :: Ptr WlrOutput -> Ptr () -> Ptr PixmanRegion32 -> IO Word8
+foreign import ccall safe "wlr_output_swap_buffers" c_swap_buffers :: Ptr WlrOutput -> Ptr () -> Ptr PixmanRegion32 -> IO Word8
 swapOutputBuffers :: Ptr WlrOutput -> Maybe Integer -> Maybe (Ptr PixmanRegion32) -> IO Bool
 swapOutputBuffers out time damage =
     let withTime = case time of
@@ -144,13 +144,13 @@ swapOutputBuffers out time damage =
      in (/= 0) <$> withTime (\t -> c_swap_buffers out t (fromMaybe nullPtr damage))
 
 
-foreign import ccall unsafe "wlr_output_destroy" c_output_destroy :: Ptr WlrOutput -> IO ()
+foreign import ccall safe "wlr_output_destroy" c_output_destroy :: Ptr WlrOutput -> IO ()
 
 destroyOutput :: Ptr WlrOutput -> IO ()
 destroyOutput = c_output_destroy
 
 
-foreign import ccall unsafe "wlr_output_effective_resolution" c_effective_resolution :: Ptr WlrOutput -> Ptr CInt -> Ptr CInt -> IO ()
+foreign import ccall safe "wlr_output_effective_resolution" c_effective_resolution :: Ptr WlrOutput -> Ptr CInt -> Ptr CInt -> IO ()
 
 effectiveResolution :: Ptr WlrOutput -> IO (Int, Int)
 effectiveResolution output = alloca $ \width -> alloca $ \height -> do
@@ -282,7 +282,7 @@ foreign import ccall "wlr_output_destroy_global" c_destroy_global :: Ptr WlrOutp
 destroyOutputGlobal :: Ptr WlrOutput -> IO ()
 destroyOutputGlobal = c_destroy_global
 
-foreign import ccall unsafe "wlr_output_transformed_resolution" c_transformed_resolution :: Ptr WlrOutput -> Ptr CInt -> Ptr CInt -> IO ()
+foreign import ccall safe "wlr_output_transformed_resolution" c_transformed_resolution :: Ptr WlrOutput -> Ptr CInt -> Ptr CInt -> IO ()
 
 outputTransformedResolution :: Ptr WlrOutput -> IO Point
 outputTransformedResolution ptr = alloca $ \xptr -> alloca $ \yptr -> do
@@ -291,17 +291,17 @@ outputTransformedResolution ptr = alloca $ \xptr -> alloca $ \yptr -> do
     y <- peek yptr
     pure $ Point (fromIntegral x) (fromIntegral y)
 
-foreign import ccall unsafe "wlr_output_schedule_frame" c_schedule_frame :: Ptr WlrOutput -> IO ()
+foreign import ccall safe "wlr_output_schedule_frame" c_schedule_frame :: Ptr WlrOutput -> IO ()
 
 scheduleOutputFrame :: Ptr WlrOutput -> IO ()
 scheduleOutputFrame = c_schedule_frame
 
-foreign import ccall unsafe "wlr_output_transform_invert" c_transform_invert :: CInt -> CInt
+foreign import ccall safe "wlr_output_transform_invert" c_transform_invert :: CInt -> CInt
 
 invertOutputTransform :: OutputTransform -> OutputTransform
 invertOutputTransform (OutputTransform val) = OutputTransform . fromIntegral $  c_transform_invert (fromIntegral val)
 
-foreign import ccall unsafe "wlr_output_transform_compose" c_transform_compose :: CInt -> CInt -> CInt
+foreign import ccall safe "wlr_output_transform_compose" c_transform_compose :: CInt -> CInt -> CInt
 
 composeOutputTransform :: OutputTransform -> OutputTransform -> OutputTransform
 composeOutputTransform (OutputTransform l) (OutputTransform r) =
@@ -310,7 +310,7 @@ composeOutputTransform (OutputTransform l) (OutputTransform r) =
 getOutputDamage :: Ptr WlrOutput -> PixmanRegion32
 getOutputDamage = PixmanRegion32 . #{ptr struct wlr_output, damage}
 
-foreign import ccall unsafe "wlr_output_from_resource" c_from_resource :: Ptr WlResource -> IO (Ptr WlrOutput)
+foreign import ccall safe "wlr_output_from_resource" c_from_resource :: Ptr WlResource -> IO (Ptr WlrOutput)
 
 outputFromResource :: Ptr WlResource -> IO (Ptr WlrOutput)
 outputFromResource = c_from_resource

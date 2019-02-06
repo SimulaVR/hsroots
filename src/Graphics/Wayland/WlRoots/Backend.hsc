@@ -24,7 +24,7 @@ import Graphics.Wayland.Signal (WlSignal)
 
 data Backend
 
-foreign import ccall unsafe "wlr_backend_autocreate" c_backend_autocreate :: Ptr DisplayServer -> Ptr a -> IO (Ptr Backend)
+foreign import ccall safe "wlr_backend_autocreate" c_backend_autocreate :: Ptr DisplayServer -> Ptr a -> IO (Ptr Backend)
 
 backendAutocreate :: DisplayServer -> IO (Ptr Backend)
 backendAutocreate (DisplayServer ptr) = throwErrnoIfNull "backendAutocreate" $ c_backend_autocreate ptr nullPtr

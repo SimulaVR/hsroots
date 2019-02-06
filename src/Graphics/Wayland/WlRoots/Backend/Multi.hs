@@ -16,13 +16,13 @@ where
 -- import Graphics.Wayland.WlRoots.Backend (Backend)
 
 
--- foreign import ccall unsafe "wlr_backend_is_multi" c_is_multi :: Ptr Backend -> IO Word8
+-- foreign import ccall safe "wlr_backend_is_multi" c_is_multi :: Ptr Backend -> IO Word8
 
 -- isMulti :: Ptr Backend -> IO Bool
 -- isMulti = fmap (/= 0) . c_is_multi
 
 
--- foreign import ccall unsafe "wlr_multi_get_session" c_get_session :: Ptr Backend -> IO (Ptr WlrSession)
+-- foreign import ccall safe "wlr_multi_get_session" c_get_session :: Ptr Backend -> IO (Ptr WlrSession)
 
 -- getSession :: Ptr Backend -> IO (Ptr WlrSession)
 -- getSession = throwErrnoIfNull "getSession" . c_get_session

@@ -47,7 +47,7 @@ import Utility (textFromNull)
 
 newtype WlrWlShell = WlrWlShell { unWlr :: Ptr WlrWlShell }
 
-foreign import ccall unsafe "wlr_wl_shell_create" c_shell_create :: Ptr DisplayServer -> IO (Ptr WlrWlShell)
+foreign import ccall safe "wlr_wl_shell_create" c_shell_create :: Ptr DisplayServer -> IO (Ptr WlrWlShell)
 
 shellCreate :: DisplayServer -> IO WlrWlShell
 shellCreate (DisplayServer ptr) =
@@ -67,12 +67,12 @@ setWlShellListener (WlrWlShell ptr) fun =
      in addListener (WlListener $ fun . WlrWlShellSurface) signal
 
 
-foreign import ccall unsafe "wlr_wl_shell_surface_configure" c_surface_configure :: Ptr WlrWlShellSurface -> CInt -> Int32 -> Int32 -> IO ()
+foreign import ccall safe "wlr_wl_shell_surface_configure" c_surface_configure :: Ptr WlrWlShellSurface -> CInt -> Int32 -> Int32 -> IO ()
 
 configureWlShellSurface :: WlrWlShellSurface -> Int32 -> Int32 -> IO ()
 configureWlShellSurface (WlrWlShellSurface ptr) x y = c_surface_configure ptr 0 x y
 
-foreign import ccall unsafe "wlr_wl_shell_surface_surface_at" c_surface_at :: Ptr WlrWlShellSurface -> Double -> Double -> Ptr Double -> Ptr Double -> IO (Ptr WlrSurface)
+foreign import ccall safe "wlr_wl_shell_surface_surface_at" c_surface_at :: Ptr WlrWlShellSurface -> Double -> Double -> Ptr Double -> Ptr Double -> IO (Ptr WlrSurface)
 
 shellSurfaceAt :: WlrWlShellSurface -> Double -> Double -> IO (Maybe (Ptr WlrSurface, Double, Double))
 shellSurfaceAt (WlrWlShellSurface ptr) x y = alloca $ \xptr -> alloca $ \yptr -> do

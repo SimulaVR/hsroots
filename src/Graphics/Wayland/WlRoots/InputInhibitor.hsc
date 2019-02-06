@@ -23,13 +23,13 @@ import Graphics.Wayland.Global (WlGlobal)
 
 data WlrInputInhibitor = WlrInputInhibitor (Ptr WlrInputInhibitor)
 
-foreign import ccall unsafe "wlr_input_inhibit_manager_create" c_create :: Ptr DisplayServer -> IO (Ptr WlrInputInhibitor)
+foreign import ccall safe "wlr_input_inhibit_manager_create" c_create :: Ptr DisplayServer -> IO (Ptr WlrInputInhibitor)
 
 createInputInhibitor :: DisplayServer -> IO WlrInputInhibitor
 createInputInhibitor (DisplayServer dsp) = WlrInputInhibitor <$>
     throwErrnoIfNull "createInputInhibitor" (c_create dsp)
 
-foreign import ccall unsafe "wlr_input_inhibit_manager_destroy" c_destroy :: Ptr WlrInputInhibitor -> IO ()
+foreign import ccall safe "wlr_input_inhibit_manager_destroy" c_destroy :: Ptr WlrInputInhibitor -> IO ()
 
 
 destroyInputInhibitor :: WlrInputInhibitor -> IO ()

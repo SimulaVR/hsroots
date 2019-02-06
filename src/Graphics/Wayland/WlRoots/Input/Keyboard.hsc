@@ -132,7 +132,7 @@ readModifiers ptr = Modifiers
     <*> #{peek struct wlr_keyboard, modifiers.locked} ptr
     <*> #{peek struct wlr_keyboard, modifiers.group} ptr
 
-foreign import ccall unsafe "wlr_keyboard_get_modifiers" c_get_modifiers :: Ptr WlrKeyboard -> IO Word32
+foreign import ccall safe "wlr_keyboard_get_modifiers" c_get_modifiers :: Ptr WlrKeyboard -> IO Word32
 
 getModifiers :: Ptr WlrKeyboard -> IO Word32
 getModifiers = c_get_modifiers

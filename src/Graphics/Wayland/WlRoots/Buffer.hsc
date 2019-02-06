@@ -25,12 +25,12 @@ getBufferResource (WlrBuffer ptr) = do
         then pure Nothing
         else pure $ Just ret
 
-foreign import ccall unsafe "wlr_buffer_ref" c_ref :: Ptr WlrBuffer -> IO ()
+foreign import ccall safe "wlr_buffer_ref" c_ref :: Ptr WlrBuffer -> IO ()
 
 getBuffer :: WlrBuffer -> IO WlrBuffer
 getBuffer b@(WlrBuffer ptr) = c_ref ptr >> pure b
 
-foreign import ccall unsafe "wlr_buffer_unref" c_unref :: Ptr WlrBuffer -> IO ()
+foreign import ccall safe "wlr_buffer_unref" c_unref :: Ptr WlrBuffer -> IO ()
 
 putBuffer :: WlrBuffer -> IO ()
 putBuffer (WlrBuffer ptr) = c_unref ptr
