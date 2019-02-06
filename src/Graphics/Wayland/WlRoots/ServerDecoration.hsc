@@ -54,14 +54,14 @@ getDecorationManagerEvents ptr = DecorationManagerEvents
     }
 
 
-foreign import ccall safe "wlr_server_decoration_manager_create" c_create :: Ptr DisplayServer -> IO (Ptr WlrServerDecorationManager)
+foreign import ccall unsafe "wlr_server_decoration_manager_create" c_create :: Ptr DisplayServer -> IO (Ptr WlrServerDecorationManager)
 
 createServerDecorationManager :: DisplayServer -> IO (Ptr WlrServerDecorationManager)
 createServerDecorationManager (DisplayServer ptr) =
     throwErrnoIfNull "createServerDecorationManager" $ c_create ptr
 
 
-foreign import ccall safe "wlr_server_decoration_manager_destroy" c_destroy :: Ptr WlrServerDecorationManager -> IO ()
+foreign import ccall unsafe "wlr_server_decoration_manager_destroy" c_destroy :: Ptr WlrServerDecorationManager -> IO ()
 
 
 destroyServerDecorationManager :: Ptr WlrServerDecorationManager -> IO ()
@@ -70,7 +70,7 @@ destroyServerDecorationManager = c_destroy
 -- void wlr_server_decoration_manager_set_default_mode(
 --  struct wlr_server_decoration_manager *manager, uint32_t default_mode);
 
-foreign import ccall safe "wlr_server_decoration_manager_set_default_mode" c_set_default_mode :: Ptr WlrServerDecorationManager -> Word32 -> IO ()
+foreign import ccall unsafe "wlr_server_decoration_manager_set_default_mode" c_set_default_mode :: Ptr WlrServerDecorationManager -> Word32 -> IO ()
 
 setDefaultDecorationMode :: Ptr WlrServerDecorationManager -> ServerDecorationMode -> IO ()
 setDefaultDecorationMode ptr mode = c_set_default_mode ptr $ sDModeToInt mode

@@ -90,7 +90,7 @@ translateBox x y (WlrBox bx by bh bw) = WlrBox (x + bx) (y + by) bh bw
 -- void wlr_box_transform(const struct wlr_box *box,
 -- enum wl_output_transform transform, int width, int height,
 -- struct wlr_box *dest);
-foreign import ccall safe "wlr_box_transform" c_transform :: Ptr WlrBox -> CInt -> CInt -> CInt -> Ptr WlrBox -> IO ()
+foreign import ccall unsafe "wlr_box_transform" c_transform :: Ptr WlrBox -> CInt -> CInt -> CInt -> Ptr WlrBox -> IO ()
 
 boxTransform' :: WlrBox -> OutputTransform -> Int -> Int -> IO WlrBox
 boxTransform' box (OutputTransform val) x y = alloca $ \ret -> do
