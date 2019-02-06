@@ -39,6 +39,7 @@ foreign import ccall unsafe "wl_list_remove" c_list_remove :: Ptr WlList -> IO (
 
 destroyWlListener :: forall a. Ptr (WlListener a) -> IO ()
 destroyWlListener ptr = do
+    putStrLn "destroying wl listener..."
     removeListener' ptr
     notify :: FunPtr (Ptr a -> IO ()) <- #{peek struct wl_listener, notify} ptr
     when (castFunPtrToPtr notify /= nullPtr) $ freeHaskellFunPtr notify
@@ -47,6 +48,7 @@ destroyWlListener ptr = do
 
 freeWlListener :: forall a. Ptr (WlListener a) -> IO ()
 freeWlListener ptr = do
+    putStrLn "freeing wl listener due to GC..."
     destroyWlListener ptr
     free ptr
 
