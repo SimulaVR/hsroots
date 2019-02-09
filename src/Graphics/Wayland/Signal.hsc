@@ -4,7 +4,7 @@
 module Graphics.Wayland.Signal
     ( WlSignal
     , WlListener (..)
-    , ListenerToken
+    , ListenerToken (..)
 
     , makeListenerPtr
     , addListener
@@ -13,6 +13,7 @@ module Graphics.Wayland.Signal
     , setSignalHandler
     , setDestroyHandler
     , addDestroyListener
+    , freeListenerToken
     )
 where
 
@@ -22,7 +23,7 @@ where
 import Control.Monad (when)
 import Control.Concurrent.MVar
 import Foreign.Storable (Storable(..))
-import Foreign.Marshal.Alloc (mallocBytes)
+import Foreign.Marshal.Alloc (mallocBytes, free)
 import Foreign.Ptr (Ptr, FunPtr, plusPtr, freeHaskellFunPtr, nullPtr, castFunPtrToPtr)
 import Foreign.ForeignPtr (ForeignPtr, withForeignPtr, newForeignPtr_)
 --import Foreign.Concurrent (newForeignPtr)
@@ -39,19 +40,21 @@ foreign import ccall unsafe "wl_list_remove" c_list_remove :: Ptr WlList -> IO (
 
 destroyWlListener :: forall a. Ptr (WlListener a) -> IO ()
 destroyWlListener ptr = do
-    putStr "destroyed listener "
-    print ptr
     removeListener' ptr
     notify :: FunPtr (Ptr a -> IO ()) <- #{peek struct wl_listener, notify} ptr
     when (castFunPtrToPtr notify /= nullPtr) $ freeHaskellFunPtr notify
     #{poke struct wl_listener, notify} ptr nullPtr
 
-{-
 freeWlListener :: forall a. Ptr (WlListener a) -> IO ()
 freeWlListener ptr = do
+    putStrLn $ "Destroying listener: " ++ (show ptr)
     destroyWlListener ptr
     free ptr
--}
+
+freeListenerToken :: ListenerToken -> IO ()
+freeListenerToken (ListenerToken fptrWlListener) = do
+  withForeignPtr fptrWlListener freeWlListener
+
 foreign import ccall "wrapper" mkCbFun :: (Ptr (WlListener a) -> Ptr a -> IO ()) -> IO (FunPtr (Ptr (WlListener a) -> Ptr a -> IO ()))
 
 makeListenerPtr :: forall a. WlListener a -> IO (ForeignPtr (WlListener a))
@@ -61,7 +64,8 @@ makeListenerPtr (WlListener fun) = do
     c_list_init link
     funPtr <- mkCbFun (\_ -> fun)
     #{poke struct wl_listener, notify} mem funPtr
-    newForeignPtr_ mem  -- (freeWlListener mem)
+    -- newForeignPtr mem (freeWlListener mem)
+    newForeignPtr_ mem
 
 addListener :: WlListener a -> Ptr (WlSignal a) -> IO (ListenerToken)
 addListener listener signal = do
