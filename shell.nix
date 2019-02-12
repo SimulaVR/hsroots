@@ -1,19 +1,25 @@
 { pkgs ? import <nixpkgs> {}, ghc ? pkgs.ghc }:
 
 pkgs.haskell.lib.buildStackProject {
-  name = "simula-godot";
+  name = "hsroots";
   inherit ghc;
   buildInputs = with pkgs; [
-                          #  libinput  # <-- Possibly too recent for hsroots
-                             (callPackage ./nix/libinput/default.nix { } )
-                             libxkbcommon
-                             pkgconfig
+                             libinput
+                             # (callPackage ./nix/libinput/default.nix { } )
                              (callPackage ./nix/wayland.nix { } )
                              (callPackage ./nix/wayland-protocols.nix { } )
                              (callPackage ./nix/wlroots.nix { } )
                              libGL
-                             xorg.libX11
                              xorg.pixman
+                             libxkbcommon
+                             zlib
+                             git
+                             xorg.libX11
+                             udev
+                             cabal-install
+                             pkgconfig
+                             pixman
+                             (callPackage ./nix/libdrm.nix { } )
                           ];
 
   LANG = "en_US.UTF-8";
